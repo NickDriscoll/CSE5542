@@ -1,5 +1,7 @@
-function plane_prim() {
-
+function plane_prim(width, height, c) {
+	var geo = new THREE.PlaneGeometry(width, height);
+	var mat = new THREE.MeshBasicMaterial( {color: c, wireframe: true} );
+	return new THREE.Mesh(geo, mat);
 }
 
 function cube_prim(length, c) {
@@ -8,16 +10,22 @@ function cube_prim(length, c) {
 	return new THREE.Mesh(geo, mat);
 }
 
-function sphere_prim() {
-
+function sphere_prim(radius, widthSegments, heightSegments, c) {
+	var geo = new THREE.SphereGeometry(radius, widthSegments, heightSegments);
+	var mat = new THREE.MeshBasicMaterial( {color: c, wireframe: true} );
+	return new THREE.Mesh(geo, mat);
 }
 
-function cylinder_prim() {
-
+function cylinder_prim(radius, height, radialSegments, heightSegments, c) {
+	var geo = new THREE.CylinderGeometry(radius, radius, radialSegments, heightSegments);
+	var mat = new THREE.MeshBasicMaterial( {color: c, wireframe: true} );
+	return new THREE.Mesh(geo, mat);
 }
 
-function cone_prim() {
-
+function cone_prim(radius, height, radialSegments, heightSegments, c) {
+	var geo = new THREE.ConeGeometry(radius, height, radialSegments, heightSegments);
+	var mat = new THREE.MeshBasicMaterial( {color: c, wireframe: true} );
+	return new THREE.Mesh(geo, mat);
 }
 
 var scene = new THREE.Scene();
@@ -26,16 +34,27 @@ var camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHe
 var renderer = new THREE.WebGLRenderer();
 renderer.setSize( window.innerWidth, window.innerHeight );
 document.body.appendChild( renderer.domElement );
-var cube = cube_prim(1, 0x00ff00);
-cube.rotation.x += 1;
-cube.rotation.y += 1;
-scene.add( cube );
 
-camera.position.z = 5;
+//Create our geometries
+var plane = plane_prim(15, 15, 0xFFFFFF);
+scene.add( plane );
+
+var left_foot = cone_prim(1, 2, 8, 1, 0xFF0000);
+left_foot.position.x -= 3;
+left_foot.position.y -= 3;
+scene.add( left_foot );
+
+var right_foot = cone_prim(1, 2, 8, 1, 0xFF0000);
+right_foot.position.x += 3;
+right_foot.position.y -= 3;
+scene.add( right_foot );
+
+
+camera.position.z = 15;
 
 function animate() {
 	requestAnimationFrame( animate );
-
+	console.log(left_foot.rotation.x);
 	renderer.render( scene, camera );
 }
 animate();

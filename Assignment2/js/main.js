@@ -46,10 +46,10 @@ var views = [
 	},
 	{
 		left: 0.5,
-		top: 0.5,
+		top: 0.0,
 		width: 0.5,
-		height: 0.5,
-		background: new THREE.Color( 0.7, 0.5, 0.5 ),
+		height: 1.0,
+		background: new THREE.Color( 0.5, 0.5, 0.7 ),
 		eye: [ 0, 1800, 0 ],
 		up: [ 0, 0, 1 ],
 		fov: 45,
@@ -61,11 +61,20 @@ var views = [
 	}
 ];
 
+function onDocumentMouseMove( event ) {
+	mouseX = ( event.clientX - window.innerWidth / 2 );
+	mouseY = ( event.clientY - window.innerHeight / 2 );
+}
+
+var mouseX = 0, mouseY = 0;
+
+document.addEventListener( 'mousemove', onDocumentMouseMove, false );
+
 for (var i = 0; i < views.length; i++) {
 	var view = views[i];
 	var camera = new THREE.PerspectiveCamera(view.fov, window.innerWidth / window.innerHeight, 1, 10000);
-	camera.position.fromArray( view.eye );
-	camera.up.fromArray( view.up );
+	camera.position.fromArray(view.eye);
+	camera.up.fromArray(view.up);
 	view.camera = camera;
 }
 
@@ -111,10 +120,27 @@ scene.add(head);
 views[0].camera.position.z = 15;
 views[0].camera.position.y += 3;
 
+console.log(views[0].camera);
+
 function animate() {
 	requestAnimationFrame( animate );
 
-	
+	for (var i = 0; i < views.length; i++) {
+		var view = views[i];
+		var camera = view.camera;
+		view.updateCamera( camera, scene, mouseX, mouseY );
+		var left = Math.floor( window.innerWidth * view.left );
+		var top = Math.floor( window.innerHeight * view.top );
+		var width = Math.floor( window.innerWidth * view.width );
+		var height = Math.floor( window.innerHeight * view.height );
+		renderer.setViewport( left, top, width, height );
+		renderer.setScissor( left, top, width, height );
+		renderer.setScissorTest( true );
+		renderer.setClearColor( view.background );
+		camera.aspect = width / height;
+		camera.updateProjectionMatrix();
+		renderer.render( scene, camera );
+	}
 
 	renderer.render( scene, views[0].camera );
 }

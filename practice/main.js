@@ -1,4 +1,27 @@
-const numpoints = 50000;
+var points = [];
+
+function triangle(a, b, c)
+{
+	points.push(a, b,c);
+}
+
+function divide_triangle(a, b, c, count)
+{
+	if (count == 0)
+	{
+		triangle(a, b, c);
+		return;
+	}
+
+	var ab = mix(a, b, 0.5);
+	var ac = mix(a, c, 0.5);
+	var bc = mix(b, c, 0.5);
+
+	count--;
+	divide_triangle(a, ab, ac, count);
+	divide_triangle(c, ac, bc, count);
+	divide_triangle(b, bc, ab, count);
+}
 
 window.onload = function main()
 {
@@ -14,17 +37,9 @@ window.onload = function main()
 		vec2(1, -1)
 	];
 
-	var u = add(vertices[0], vertices[1]);
-	var v = add(vertices[0], vertices[2]);
-	var p = scale(0.25, add(u, v));
-
-	points = [p];
-	for (var i = 0; i < numpoints; i++) {
-		var j = Math.floor(Math.random() * 3);
-		p = add(points[i], vertices[j]);
-		p = scale(0.5, p);
-		points.push(p);
-	}
+	const depth = 8;
+	var numpoints = Math.pow(3, depth) - 1;
+	divide_triangle(vertices[0], vertices[1], vertices[2], depth);
 
 	gl.viewport(0, 0, canvas.width, canvas.height);
 	gl.clearColor(1.0, 1.0, 1.0, 1.0);
@@ -41,5 +56,5 @@ window.onload = function main()
 	gl.enableVertexAttribArray(vPosition);
 
 	gl.clear(gl.COLOR_BUFFER_BIT);
-	gl.drawArrays(gl.POINTS, 0, numpoints);
+	gl.drawArrays(gl.TRIANGLES, 0, numpoints);
 }

@@ -9,34 +9,15 @@ var model_view_matrix;
 
 var theta = 0;
 
-function triangle(a, b, c)
-{
-	points.push(a, b,c);
-}
-
-function divide_triangle(a, b, c, count)
-{
-	if (count == 0)
-	{
-		triangle(a, b, c);
-		return;
-	}
-
-	var ab = mix(a, b, 0.5);
-	var ac = mix(a, c, 0.5);
-	var bc = mix(b, c, 0.5);
-
-	count--;
-	divide_triangle(a, ab, ac, count);
-	divide_triangle(c, ac, bc, count);
-	divide_triangle(b, bc, ab, count);
-}
-
 function render()
 {
 	//Compute rotation matrix
-	theta += 1;	
-	matrix = rotateY(theta);
+	theta += 1;
+	matrix = mult(rotateZ(theta), mult(rotateX(theta), rotateY(theta)));
+
+	//Add scaling
+	var factor = Math.sin(theta * 0.01) * 0.25 + 0.75;
+	matrix = mult(matrix, scalem(factor, factor, factor));
 
 	//Send the new matrix to the GPU
 	gl.uniformMatrix4fv(model_view_matrix, false, flatten(matrix));

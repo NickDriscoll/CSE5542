@@ -7,17 +7,19 @@ var num_vertices = 36;
 var matrix;
 var model_view_matrix;
 
-var theta = 0;
+var thetas = [0, 0, 0];
+var rot_funcs = [rotateX, rotateY, rotateZ];
 
 function render()
 {
 	//Compute rotation matrix
-	theta += 1;
-	matrix = mult(rotateZ(theta), mult(rotateX(theta), rotateY(theta)));
+	matrix = mat4();
+	for (var i = 0; i < rot_funcs.length; i++)
+	{
+		matrix = mult(matrix, rot_funcs[i](thetas[i]));
+	}
 
-	//Add scaling
-	var factor = Math.sin(theta * 0.01) * 0.25 + 0.75;
-	matrix = mult(matrix, scalem(factor, factor, factor));
+	//matrix = mult(rotateZ(theta), mult(rotateX(theta), rotateY(theta)));
 
 	//Send the new matrix to the GPU
 	gl.uniformMatrix4fv(model_view_matrix, false, flatten(matrix));
@@ -109,4 +111,19 @@ window.onload = function main()
 	gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint8Array(indices), gl.STATIC_DRAW);
 
 	render();
+}
+
+document.getElementById("sliderX").oninput = function()
+{
+	thetas[0] = this.value;
+}
+
+document.getElementById("sliderY").oninput = function()
+{
+	thetas[1] = this.value;
+}
+
+document.getElementById("sliderZ").oninput = function()
+{
+	thetas[2] = this.value;
 }

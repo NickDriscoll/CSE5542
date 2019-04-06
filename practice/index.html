@@ -6,6 +6,7 @@
 		attribute vec4 vPosition;
 		attribute vec4 vColor;
 		varying vec4 fColor;
+
 		uniform mat4 model_view_matrix;
 
 		void main()
@@ -30,6 +31,18 @@
 	</head>
 	<body>
 		<canvas id="gl-canvas" width="800" height="800"></canvas>
+		<br/>
+		X-Rotation
+		<br/>
+		<input id="sliderX" type="range" min="0" max="360" value="0"></input>
+		<br/>
+		Y-Rotation
+		<br/>
+		<input id="sliderY" type="range" min="0" max="360" value="0"></input>
+		<br/>
+		Z-Rotation
+		<br/>
+		<input id="sliderZ" type="range" min="0" max="360" value="0"></input>
 	</body>
 
 	<script type="text/javascript" src="webgl-utils.js"></script>
